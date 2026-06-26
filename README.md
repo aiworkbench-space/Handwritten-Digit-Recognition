@@ -77,7 +77,7 @@
    ```powershell
    .\vcpkg install opencv4[core,imgproc,imgcodecs]:x64-windows
    ```
-  说明：该项目仅使用 `OpenCV` 保存 BMP 图像，不需要`GUI` 功能（如 `highgui` 模块），因此精简安装即可。
+说明：该项目仅使用 `OpenCV` 保存 BMP 图像，不需要`GUI` 功能（如 `highgui` 模块），因此精简安装即可。
 
 3. 记录 `vcpkg` 的安装路径（例如 `D:/vcpkg`），后续 `CMake` 配置会用到。
 ---   
