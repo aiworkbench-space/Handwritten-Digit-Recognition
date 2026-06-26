@@ -135,24 +135,35 @@
 ### Q1: 运行时提示“找不到 *.dll”
 原因：缺少 `LibTorch` 或 `OpenCV` 的运行时动态链接库。
 解决：
-   • 确保编译时使用了 `CMake 3.21+` 并启用了自动 DLL 复制功能（已在 `CMakeLists.txt` 中配置）。
-   • 如仍缺失，可手动将 `D:/libtorch/lib/*.dll` 和 `D:/vcpkg/installed/x64-windows/bin/*.dll`复制到 `mnist.exe` 所在目录。
+
+1.确保编译时使用了 `CMake 3.21+` 并启用了自动 DLL 复制功能（已在 `CMakeLists.txt` 中配置）。
+
+2.如仍缺失，可手动将 `D:/libtorch/lib/*.dll` 和 `D:/vcpkg/installed/x64-windows/bin/*.dll`复制到 `mnist.exe` 所在目录。
+
 ### Q2: 提示“Error opening images file at ./data/...”
 原因：MNIST 数据文件下载失败或路径不正确。
 解决：
-   • 检查 `data/MNIST/`(或`data`) 目录下是否存在 4 个 `ubyte`文件，且大小正常。
-   删除 data 文件夹让程序重新下载。
-   • 若下载失败，可手动从 MNIST 官网 下载 `.gz` 文件，解压后放入 `data/MNIST/`，文件名必须与上述完全一致（区分大小写）。
+
+1.检查 `data/MNIST/`(或`data`) 目录下是否存在 4 个 `ubyte`文件，且大小正常。删除 data 文件夹让程序重新下载。
+
+2.若下载失败，可手动从 MNIST 官网 下载 `.gz` 文件，解压后放入 `data/MNIST/`，文件名必须与上述完全一致（区分大小写）。
+
 ### Q3: OpenCV 报错“could not find a writer for the specified extension”
 原因：精简版 OpenCV 可能缺少对应图像格式的编码器。
 解决：
-   • 代码中已使用 `.bmp` 格式，BMP 为 `OpenCV` 内置支持，无需额外编码器。
-   • 如果仍报错，请检查是否在安装 `OpenCV` 时正确包含了 `imgcodecs`特性。
+
+1.代码中已使用 `.bmp` 格式，BMP 为 `OpenCV` 内置支持，无需额外编码器。
+
+2.如果仍报错，请检查是否在安装 `OpenCV` 时正确包含了 `imgcodecs`特性。
+
 ### Q4: 测试准确率较低（< 90%）
 可能原因及解决方法：
-   训练不充分：增加 `num_epochs` 至 15~20。
-   学习率不合适：尝试将 `lr` 改为 0.0005 或 0.0001。
-   优化器选择：可将 `Adam` 替换为带动量的 `SGD`：
+
+1.训练不充分：增加 `num_epochs` 至 15~20。
+
+2.学习率不合适：尝试将 `lr` 改为 0.0005 或 0.0001。
+
+3.优化器选择：可将 `Adam` 替换为带动量的 `SGD`：
 ```         
    torch::optim::SGD optimizer(net.parameters(), torch::optim::SGDOptions(lr).momentum(0.9));
 ```
