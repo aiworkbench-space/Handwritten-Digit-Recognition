@@ -35,17 +35,17 @@
 ## 项目结构
 
 项目根目录/
-├── CMakeLists.txt # CMake 构建配置文件
-├── mnist.cpp # 主程序源代码
-├── data/ # MNIST 数据集（程序自动下载）
-│ └── MNIST/
-│ └── raw/
-│ ├── train-images-idx3-ubyte
-│ ├── train-labels-idx1-ubyte
-│ ├── t10k-images-idx3-ubyte
-│ └── t10k-labels-idx1-ubyte
-├── mnist.exe # 编译生成的可执行文件（在根目录）
-└── *.dll # 运行时所需的动态链接库（自动复制）
+├── CMakeLists.txt # CMake 构建配置文件           |
+├── mnist.cpp # 主程序源代码                      |
+├── data/ # MNIST 数据集（程序自动下载）           |
+│ └── MNIST/                                     |
+│ └── raw/                                       |
+│ ├── train-images-idx3-ubyte                    |
+│ ├── train-labels-idx1-ubyte                    |   
+│ ├── t10k-images-idx3-ubyte                     |
+│ └── t10k-labels-idx1-ubyte                     |
+├── mnist.exe # 编译生成的可执行文件（在根目录）    |
+└── *.dll # 运行时所需的动态链接库（自动复制）      |
 
 ---
 训练完成后，根目录会生成以下图像文件：
@@ -74,29 +74,36 @@
    .\bootstrap-vcpkg.bat
 
 2. 使用 vcpkg 安装精简版 OpenCV（仅包含核心、图像处理和图像保存模块）：
-  .\vcpkg install opencv4[core,imgproc,imgcodecs]:x64-windows
+   ```powershell
+   .\vcpkg install opencv4[core,imgproc,imgcodecs]:x64-windows
+  
   说明：该项目仅使用 OpenCV 保存 BMP 图像，不需要 GUI 功能（如 highgui 模块），因此精简安装即可。
 
-3. 记录 vcpkg 的安装路径（例如 D:/vcpkg），后续 CMake 配置会用到。
+4. 记录 vcpkg 的安装路径（例如 D:/vcpkg），后续 CMake 配置会用到。
 ---   
 ### 3. 下载项目源码
 将 CMakeLists.txt 和 mnist.cpp 放入同一个项目目录，例如 D:/DNN_v2_0/DNN。
+
 ---
 ## 编译和运行
 ### 1. 生成 CMake 项目
 打开 PowerShell 并进入项目根目录：
-cd D:/DNN_v2_0/DNN
-mkdir build
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE="D:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+   ```powershell
+   cd D:/DNN_v2_0/DNN
+   mkdir build
+   cd build
+   cmake .. -DCMAKE_TOOLCHAIN_FILE="D:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
 请将 CMAKE_TOOLCHAIN_FILE 的路径改为你的实际 vcpkg 路径。
 ### 2. 编译 Release 版本
-cmake --build . --config Release
+   ```powershell
+   cmake --build . --config Release
+
 编译成功后，可执行文件 mnist.exe 和依赖的 DLL 会自动部署到项目根目录。
 ### 3. 运行程序
 回到项目根目录并运行：
-   cd ..
-   
+  ```powershell
+   cd ..   
    .\mnist.exe
 
 ---
@@ -110,6 +117,7 @@ cmake --build . --config Release
 ---
 ## 自定义训练参数
    可以在 mnist.cpp 中找到以下变量并按需修改：
+```
    const int64_t input_size = 784;   // 输入特征数（28*28）
    const int64_t hidden_size = 500;  // 隐藏层神经元数量
    const int64_t num_classes = 10;   // 输出类别数
@@ -124,11 +132,11 @@ cmake --build . --config Release
 原因：缺少 LibTorch 或 OpenCV 的运行时动态链接库。
 解决：
    • 确保编译时使用了 CMake 3.21+ 并启用了自动 DLL 复制功能（已在 CMakeLists.txt 中配置）。
-   • 如仍缺失，可手动将 D:/libtorch/lib/*.dll 和 D:/codeAI/vcpkg/installed/x64-windows/bin/*.dll复制到 mnist.exe 所在目录。
+   • 如仍缺失，可手动将 D:/libtorch/lib/*.dll 和 D:/vcpkg/installed/x64-windows/bin/*.dll复制到 mnist.exe 所在目录。
 ### Q2: 提示“Error opening images file at ./data/...”
 原因：MNIST 数据文件下载失败或路径不正确。
 解决：
-   • 检查 data/MNIST/raw/ 目录下是否存在 4 个 ubyte 文件，且大小正常。
+   • 检查 data/MNIST/(或data) 目录下是否存在 4 个 ubyte 文件，且大小正常。
    删除 data 文件夹让程序重新下载。
    • 若下载失败，可手动从 MNIST 官网 下载 .gz 文件，解压后放入 data/MNIST/raw/，文件名必须与上述完全一致（区分大小写）。
 ### Q3: OpenCV 报错“could not find a writer for the specified extension”
@@ -141,6 +149,7 @@ cmake --build . --config Release
    训练不充分：增加 num_epochs 至 15~20。
    学习率不合适：尝试将 lr 改为 0.0005 或 0.0001。
    优化器选择：可将 Adam 替换为带动量的 SGD：
+         ```
          torch::optim::SGD optimizer(net.parameters(), torch::optim::SGDOptions(lr).momentum(0.9));
 
 ---
