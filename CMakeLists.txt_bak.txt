@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(mnist_cpp LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)          # C++17 或 20 均可
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(MSVC)
+    add_compile_options(/utf-8)     # 避免编码警告
+endif()
+
+# 修改为你的 LibTorch 路径
+set(CMAKE_PREFIX_PATH "./libtorch")
+find_package(Torch REQUIRED)
+
+add_executable(mnist mnist.cpp)
+target_link_libraries(mnist ${TORCH_LIBRARIES})
+target_include_directories(mnist PUBLIC ${TORCH_INCLUDE_DIRS})
